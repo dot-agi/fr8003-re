@@ -1,0 +1,35 @@
+{
+  "tool": "fr8003 dump.py",
+  "chip": "Freqchip FR8003A",
+  "chip_id": {
+    "raw": "01000000",
+    "len": 4,
+    "chip_family": "800X",
+    "handshake_token": "FR8000OK",
+    "storage_type": "flash"
+  },
+  "scope": "main QSPI flash only",
+  "excludes": [
+    "EFUSE / chip unique id",
+    "flash OTP / security registers",
+    "128 KiB mask ROM",
+    "peripheral state"
+  ],
+  "restorable": true,
+  "crc_verified": true,
+  "flash_size": 524288,
+  "bytes_read": 524288,
+  "sha256": "de48ca83e74a48f12fbcc892a660f88b1f16d2848e394abc7fad8e10e6695a37",
+  "flash_status_registers": null,
+  "efuse_unique_id": null,
+  "readout_verdict": "UNCERTAIN",
+  "readout_verdict_is_inferred": true,
+  "readout_notes": [
+    "header entropy 0.17 bits/byte -- structured (not blank/random); confirm faithfulness via the CRC round-trip"
+  ],
+  "image_entropy_bits_per_byte": 2.1935,
+  "timestamp_utc": "2026-07-04T19:06:52.319315+00:00",
+  "image_file": "fr8003-dump.bin",
+  "read_only": true,
+  "source_window": "0x10000000 (XIP, non-destructive)"
+}

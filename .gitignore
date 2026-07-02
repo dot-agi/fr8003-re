@@ -1,0 +1,19 @@
+# python
+__pycache__/
+*.pyc
+
+# Ghidra projects (large, regenerable from image/ + tools/)
+*.gpr
+*.rep/
+*.lock
+*.bak
+
+# radare2 / rizin caches
+.r2/
+*.r2
+
+# ad-hoc analysis output — regenerate from tools/
+/scratch/
+
+# never commit a locally-dumped proprietary image
+image/*.bin
