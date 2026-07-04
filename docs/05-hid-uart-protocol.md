@@ -97,6 +97,7 @@ opcode *and* the RAW-out sub-opcode — disambiguated by position (index 0 vs 1)
   contract.
 - Radio-side baud programming (DLL/DLM write) not isolated; link demonstrably runs
   115200 8N1 (keeberry is hardware-verified).
-- The three real extra commands (`0xA7`/`0xB3`/`0xB4`): the dispatch decode is
-  confirmed, but their handler semantics are not yet identified.
+- The extra commands (`0xA7`/`0xB3`/`0xB4`): a dedicated reset trace decoded them —
+  `0xB3` clears hardware-register bits at `0x400000D0`, and none of them reset the
+  radio or enter a special mode (see [08](08-software-reflash.md)).
 - Exact `0x5A` INDICATOR emit path in the radio not pinned.

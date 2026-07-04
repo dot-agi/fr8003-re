@@ -178,3 +178,4 @@ same CON3 path — it holds the 2.4 GHz PHY constants that this flash does not.
 | [05](docs/05-hid-uart-protocol.md) | HID-over-UART (WB32 ↔ radio) |
 | [06](docs/06-ble-ota-protocol.md) | BLE OTA service |
 | [07](docs/07-24ghz-link.md) | proprietary 2.4 GHz link |
+| [08](docs/08-software-reflash.md) | software backup & re-flash (no case-opening) |

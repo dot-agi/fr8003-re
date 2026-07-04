@@ -58,6 +58,7 @@ read-locked**. (Regenerate with `tools/probe.py` + `tools/dump.py`.)
 | [05](05-hid-uart-protocol.md) | **HID-over-UART** (WB32 ↔ radio) — the seam our firmware speaks |
 | [06](06-ble-ota-protocol.md) | **BLE OTA** service — the wireless firmware-delivery path |
 | [07](07-24ghz-link.md) | **2.4 GHz** link — identity, pairing, mode select |
+| [08](08-software-reflash.md) | software backup & re-flash without opening the case |
 
 ## Status
 
