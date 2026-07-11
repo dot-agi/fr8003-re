@@ -139,26 +139,46 @@ sch_prog_init 0x1bb2d  sch_prog_push 0x1bb5d
 Writable seams: `rf_init` callback `0x110001b4`, SVC patch `0x110001c4`, `rwip_rf`
 API struct `0x11000b54`.
 
-## Owned-2.4 GHz feasibility
+## Owned-2.4 GHz feasibility — the framing envelope (RESOLVED)
 
-**Confirmed feasible now.** Custom firmware can install its own `rf_init`, load/modify
-the MODEM register image, select RF frequencies, invoke the BLE RF/test/controller
-routines, build exchange-memory descriptors, schedule its own TX/RX, and carry
-**arbitrary payloads + MAC over BLE-compatible RF framing**. The PHY is
-register-accessible, not ROM-opaque; the ROM entry points are a convenience layer,
-not the only path to the hardware.
+A dedicated MODEM-bank (`0x50024000`) + BLECORE + FR8000-SDK deep-dive (adversarially
+reviewed) settled the framing question. **The FR8003A is not limited to
+standards-compliant BLE addresses/payloads — but it *is* a BLE packet engine.** The
+MODEM image is predominantly analog/RF calibration; the framing knobs live in BLECORE
+and the per-activity control structure (CS), not in a general serializer.
 
-**Not yet proven:** fully arbitrary *non-BLE* framing — custom preamble/sync word, a
-non-BLE packet grammar, custom CRC or whitening polynomial, arbitrary symbol
-rate/modulation index, or raw continuous RX/TX outside BLECORE's descriptor model.
-These may live in the 336-byte MODEM bank at `0x50024000`, but the offsets/semantics
-are not yet identified.
+**Freely controllable (CONFIRMED):** RF center over ~`2360–2511 MHz`
+(`calib_set_freq_config`; note `2403/2405/…/2479` alias down) · a **32-bit access
+address** per activity (CS `+0x0c/+0x0e`) · a **24-bit CRC init** (CS `+0x10/+0x12`) ·
+**whitening on/off** (BLECORE `0x40000000` bit 14) and **CRC on/off** (bit 13) ·
+**arbitrary payload** bytes in exchange RAM after the header · one of **4 BLE
+rate/coding** values (CS `+0x04`) · DTM PRBS/fixed patterns, an endless modulated
+payload, and likely CW (MODEM `+0x139[7]`).
 
-**Verdict:** *owned BLE-compatible 2.4 GHz is feasible now; fully arbitrary non-BLE
-PHY framing is plausible but unproven.* Practical path: reuse the FR8000 ROM/SDK ABI
-+ the recovered `rf_init_app` sequence + a stock MODEM profile, and replace the
-higher-level MAC. A ground-up arbitrary GFSK PHY needs another RE pass over
-`0x50024000`, the BLECORE descriptor fields, and the frequency/test routines.
+**BLE-locked:** the BLE-generated **preamble** · the **2-byte header grammar** (fixed
+8-bit length field; predefined connection/advertising/test FORMATs — no raw format) ·
+the **modulation family** (GFSK/LE-Coded — no arbitrary index or BT filter) · the
+**CRC-24 and whitening polynomials** (only their init/enable are settable) · the **RX
+parser** (RX output is framed BLE descriptor data, not raw symbols/IQ).
+
+**Verdict — proprietary BLE-*shaped* packets: yes; fully arbitrary non-BLE PHY
+framing: no.** And that is enough: a private access address + arbitrary payload +
+CRC/whitening/rate/frequency control **is** the ESB/Gazell-class "proprietary link on
+a BLE radio" — a real owned 2.4 GHz link (private addressing/pairing, our own MAC +
+AEAD on top), with no need for a custom PHY (which buys a keyboard nothing anyway).
+
+**Proven path:** `calib_lld_init(role, arbitrary_AA)` → `calib_lld_send(len,
+payload_ptr, channel)` already transmits arbitrary bytes with a chosen access address
+(stays 1M, master/slave format, fixed header, CRC init `0x555555`, normal
+CRC/whitening unless patched). Full register recipe: `calib_set_freq_config(f)` → ch →
+CS `+0x16[5:0]`; CS `+0x00` FORMAT, `+0x04` rate (code 0–3), `+0x0c/+0x0e` AA,
+`+0x10/+0x12` CRC-init; BLECORE bit 14 whitening / bit 13 CRC; TX descriptor `+2`
+length+header, `+4` payload ptr; schedule via `lld_test_start` / `calib_lld_send`.
+(Confirmed against `lld_test_start`: AA `0x71764129`, CRC init `0x555555`, whitening
+off via BLECORE bit 14.)
+
+Custom firmware owns everything **above** the PHY — scheduling, ack/retransmit,
+pairing, crypto, telemetry — which is where the moat lives.
 
 ## Claims withdrawn (from earlier inline analysis / docs/07)
 
@@ -172,7 +192,9 @@ higher-level MAC. A ground-up arbitrary GFSK PHY needs another RE pass over
 
 ## Open items
 
-- The `0x50024000` MODEM register semantics (which bytes = sync word / CRC /
-  whitening / symbol rate / modulation) — the depth a non-BLE PHY would need.
-- The four MODEM profiles' exact selection semantics.
+- The four MODEM profiles (P0–P3, flash `0x1001b908/ba58/bba8/bcf8`) are mostly analog
+  calibration and differ by only 3–5 bytes; their exact selection semantics are unresolved.
+- A few RF measurements would firm up the INFERRED points (BLECORE bit 13 CRC-off on air;
+  CW vs endless-payload spectra; the modulation-DAC deviation/index knob; synth-word LSB
+  granularity).
 - Import the full FR8000 SDK symbol map for the complete named ROM ABI.
