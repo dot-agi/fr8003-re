@@ -19,8 +19,8 @@ radio firmware toward that goal.
 
 ARM Cortex-M3 @ 96 MHz, BLE 5.1 + proprietary 2.4 GHz, 512 KiB QSPI flash executed
 in place (XIP) at `0x10000000`, **SRAM at `0x11000000`**, 128 KiB mask ROM at `0x0`
-holding the BLE controller/host stack, the proprietary 2.4 GHz driver (`rf_simu.c`),
-and ROMBOOT. Built on the FreqChip **FR801x SDK** — see the README for how to fetch
+holding a RivieraWaves BLE stack + the RF-init framework and ROMBOOT (now dumped
+and analyzed — see [`09`](09-mask-rom.md)). Built on the FreqChip **FR801x SDK** — see the README for how to fetch
 it; it defines the exact structs, memory map, and ROM API this firmware links
 against, and was the key to decoding everything here.
 
@@ -43,7 +43,7 @@ read-locked**. (Regenerate with `tools/probe.py` + `tools/dump.py`.)
 | Free flash | `0x1d000–0x7c000` — ~380 KB erased (also the OTA "bank B") |
 | **HID-over-UART** | **fully reversed**, cross-confirmed byte-for-byte vs keeberry — the WB32↔radio contract ([05](05-hid-uart-protocol.md)) |
 | **BLE OTA** | stock FreqChip profile; **unsigned, CRC-32-gated** — a wireless firmware-delivery path (mechanism proven, final acceptance pending) ([06](06-ble-ota-protocol.md)) |
-| **2.4 GHz** | identity/pairing/HID transport recovered; the **PHY lives in mask ROM**, not this flash ([07](07-24ghz-link.md)) |
+| **2.4 GHz** | identity/pairing/HID transport recovered; RivieraWaves BLE core (ROM) + an **APP-supplied MODEM image** — owned BLE-compatible 2.4G is feasible ([07](07-24ghz-link.md) · [09](09-mask-rom.md)) |
 | BLE identity | advertises `Akko 5075-1` / `HS-Bluetooth`; multi-host, static-random addressing |
 
 ## Documentation index

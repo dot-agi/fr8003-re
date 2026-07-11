@@ -1,13 +1,26 @@
 # 07 — Proprietary 2.4 GHz dongle link (FR8003A)
 
-## The pivotal finding: the PHY is in mask ROM, not this flash
+> **⚠️ Corrected by the mask-ROM analysis ([`09`](09-mask-rom.md)).** The mask ROM
+> is now dumped and is a **RivieraWaves BLE stack** — there is *no* distinct
+> proprietary-2.4 GHz MAC in it, and the app does **not** perform zero RF
+> programming: the Akko app copies a 336-byte MODEM image into the `0x50024000`
+> register bank and sets frequencies itself. The PHY config is *split* (ROM
+> framework + APP MODEM image). Treat the "PHY entirely in ROM / zero APP RF
+> programming" thesis below as **superseded**; the NVDS identity, mode-switching,
+> and HID-transport findings further down remain valid. See [`09`](09-mask-rom.md)
+> for the corrected radio model and the owned-2.4 G feasibility verdict.
+
+## The original hypothesis (superseded — see the note above)
 
 The proprietary 2.4 GHz radio link layer — RF/synth init, GFSK modulation,
-whitening, CRC, sync/access-address, the channel plan and any hopping — is **in
-the FR8003A mask ROM** (`0x00000000–0x00020000`), which this flash dump does **not
-contain**. The flashed application performs **zero** direct RF programming.
+whitening, CRC, sync/access-address, the channel plan and any hopping — was
+believed to live entirely **in the FR8003A mask ROM** (`0x00000000–0x00020000`),
+with the flashed application performing no direct RF programming. The mask-ROM dump
+showed this is only half right: the ROM holds the BLE stack + the RF-init
+*framework*, but the app supplies the board-specific MODEM register image
+(`0x50024000`) and frequency control.
 
-Proof (all confirmed, re-verified against the bytes):
+Original (now-superseded) reasoning — the flash-absence of these bases does **not** prove a ROM-only PHY; see [`09`](09-mask-rom.md):
 - The RF-SPI base `0x500F0000` (FRSPIM) and the GPIO data bases
   `0x50060000/0x50064000` occur **0 times** in the entire 512 KiB.
 - The one `0x50010000` ("modem") reference is a secondary serial/debug channel,

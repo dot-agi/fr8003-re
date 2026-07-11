@@ -40,7 +40,7 @@ guided tour.
 | Radio | BLE 5.1 + proprietary 2.4 GHz, on-chip balun |
 | Flash | 512 KiB stacked QSPI, executed in place (XIP) at `0x10000000` |
 | SRAM | `0x11000000` |
-| Mask ROM | `0x00000000–0x00020000` — BLE stack, the 2.4 GHz driver (`rf_simu.c`), ROMBOOT |
+| Mask ROM | `0x00000000–0x00020000` — a RivieraWaves BLE stack + the RF-init framework + ROMBOOT (dumped; [`docs/09`](docs/09-mask-rom.md)) |
 | SDK | FreqChip FR801x SDK (see [Developing](#developing-on-it) for how to fetch it) |
 
 Full address map and flash layout: [`docs/01-memory-map.md`](docs/01-memory-map.md).
@@ -70,7 +70,7 @@ SHA-256 and manifest so you can dump and verify an identical copy — see
 |---|---|---|---|
 | **HID-over-UART** | the WB32 ↔ radio wire contract ("md" codec) | **fully reversed**, cross-confirmed byte-for-byte against keeberry | [05](docs/05-hid-uart-protocol.md) |
 | **BLE OTA** | stock FreqChip firmware-update service | **unsigned, CRC-32-gated** wireless delivery path — mechanism proven, final acceptance pending | [06](docs/06-ble-ota-protocol.md) |
-| **2.4 GHz** | the proprietary dongle link | identity/pairing/transport recovered; the on-air **PHY lives in mask ROM**, not this flash | [07](docs/07-24ghz-link.md) |
+| **2.4 GHz** | the proprietary dongle link | identity/pairing/transport recovered; a RivieraWaves BLE core (ROM) + an **APP-supplied MODEM image** — owned BLE-compatible 2.4G is feasible | [07](docs/07-24ghz-link.md) · [09](docs/09-mask-rom.md) |
 
 ---
 
