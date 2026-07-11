@@ -8,11 +8,11 @@ SRAM at `0x11000000`).
 
 | Region | Base | Notes |
 |---|---|---|
-| Mask ROM | `0x00000000–0x00020000` | BLE controller + host stack + the proprietary 2.4G driver (`rf_simu.c`) + ROMBOOT. **Not in this dump.** |
+| Mask ROM | `0x00000000–0x00020000` | BLE controller + host stack + the proprietary 2.4G radio driver + ROMBOOT. **Dumped separately — see [`09`](09-mask-rom.md).** |
 | Flash XIP (cached) | `0x10000000` | the 512 KiB in `image/` executes in place here |
 | Flash direct (QSPI DAC) | `0x01000000` | raw QSPI window |
 | **SRAM** | **`0x11000000`** | proven by an early-startup/veneer literal `0x110001c4`, `stack_top` `0x11004a8c`, and config mirror `0x11004ae8` |
-| Peripherals | `0x50000000` | UART0 `0x50050000`, UART1 `0x50058000`, MODEM `0x50010000`, TRNG `0x500C0000`, RF-SPI (FRSPIM) `0x500F0000`, GPIO-AB `0x50060000`, GPIO-CD `0x50064000` |
+| Peripherals | `0x50000000` / `0x40000000` | UART0 `0x50050000`, UART1 `0x50058000`, efuse `0x50020000`, GPIO `0x50060000`; **the BLE/modem link engine is at `0x40000000`** (not the SDK-nominal `0x50010000`), and FRSPIM `0x500F0000` is unused. ROM-observed map in [`09`](09-mask-rom.md) |
 
 **XIP rule used throughout this repo:** flash file offset `N` = CPU address
 `0x10000000 + N`. So the entry pointer `0x10002d05` is flash offset `0x2d04`.

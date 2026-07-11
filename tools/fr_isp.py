@@ -674,6 +674,34 @@ class RomLink:
                 progress(done, length)
         return bytes(out)
 
+    def read_ram(self, addr: int, length: int,
+                 progress: Optional[Callable[[int, int], None]] = None) -> bytes:
+        """Read ``length`` bytes from the ABSOLUTE address ``addr`` via READ_RAM.
+
+        Unlike ``read_flash`` (0-based flash offsets), ``OP_READ_RAM`` takes an
+        absolute memory address and returns 4 bytes per transaction -- so it reaches
+        the **128 KiB mask ROM at 0x0** (which ``read_flash`` cannot). READ-ONLY and
+        non-destructive.  Slow (4 B per round trip); intended for the one-time
+        mask-ROM RE dump, not the flash.  ``addr`` and ``length`` must be 4-aligned.
+        """
+        if addr % 4 or length % 4:
+            raise ValueError("read_ram requires 4-byte-aligned addr and length")
+        self._require_read("read RAM/ROM")
+        out = bytearray()
+        a = addr
+        while len(out) < length:
+            data = self._transact(OP_READ_RAM, struct.pack("<IH", a, 4))
+            if len(data) != 4:
+                raise FrError(f"read_ram: asked 4 bytes at 0x{a:08x}, got {len(data)} "
+                              "-- READ_RAM may not reach this region (use the stub path)")
+            out += data
+            a += 4
+            if progress and (len(out) & 0xFFF) == 0:
+                progress(len(out), length)
+        if progress:
+            progress(len(out), length)
+        return bytes(out)
+
     def chip_crc32(self, offset: int, length: int) -> int:
         """Ask the ROM for the CRC32 of the XIP window [xip_base+offset, +length).
 

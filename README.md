@@ -24,7 +24,10 @@ understanding, plus everything needed to reproduce it.
 **Status:** the factory firmware is dumped (CRC-verified), confirmed plaintext,
 fully mapped, and **all three of its protocols reverse-engineered** — the
 HID-over-UART contract fully; BLE OTA and the 2.4 GHz link with documented open
-items. See [`docs/00-overview.md`](docs/00-overview.md) for the guided tour.
+items. The **128 KiB mask ROM is now dumped too** ([`docs/09`](docs/09-mask-rom.md))
+— the radio-stack half the flash does not contain, which confirmed the ROMBOOT
+protocol from silicon. See [`docs/00-overview.md`](docs/00-overview.md) for the
+guided tour.
 
 ---
 
@@ -127,9 +130,10 @@ power-cycle the radio to enter ROMBOOT — the ROM emits a `freqchip` banner and
 tools answer it.
 
 ```bash
-python3 tools/probe.py   -p /dev/tty.usbserial-XXXX      # verify link + CRC faithfulness
-python3 tools/dump.py    -p /dev/tty.usbserial-XXXX -o my-dump.bin
-python3 tools/restore.py -p /dev/tty.usbserial-XXXX -i image/fr8003-dump.bin
+python3 tools/probe.py    -p /dev/tty.usbserial-XXXX      # verify link + CRC faithfulness
+python3 tools/dump.py     -p /dev/tty.usbserial-XXXX -o my-dump.bin       # the QSPI flash
+python3 tools/dump_rom.py -p /dev/tty.usbserial-XXXX -o my-maskrom.bin    # the 128 KiB mask ROM
+python3 tools/restore.py  -p /dev/tty.usbserial-XXXX -i image/fr8003-dump.bin
 ```
 
 `probe.py` and `dump.py` are strictly read-only and CRC-verify the read-back
@@ -149,8 +153,9 @@ Two routes, detailed in [`docs/04-next-steps.md`](docs/04-next-steps.md):
    proven) or over the air (BLE OTA — unsigned, CRC-32-only; mechanism proven,
    final acceptance pending). ~380 KB of flash is free.
 
-The immediate next acquisition is dumping the **mask ROM** (`0x0–0x20000`) over the
-same CON3 path — it holds the 2.4 GHz PHY constants that this flash does not.
+The **mask ROM** (`0x0–0x20000`) is now dumped over that same CON3 path
+([`docs/09`](docs/09-mask-rom.md)) — it holds the 2.4 GHz PHY the flash does not,
+and it confirmed the ROMBOOT protocol from silicon.
 
 ---
 
@@ -179,3 +184,4 @@ same CON3 path — it holds the 2.4 GHz PHY constants that this flash does not.
 | [06](docs/06-ble-ota-protocol.md) | BLE OTA service |
 | [07](docs/07-24ghz-link.md) | proprietary 2.4 GHz link |
 | [08](docs/08-software-reflash.md) | software backup & re-flash (no case-opening) |
+| [09](docs/09-mask-rom.md) | the 128 KiB mask ROM (radio stack; dump + analysis) |

@@ -1,0 +1,28 @@
+{
+  "tool": "fr8003 dump_rom.py",
+  "chip": "Freqchip FR8003A",
+  "chip_id": {
+    "raw": "01000000",
+    "len": 4,
+    "chip_family": "800X",
+    "handshake_token": "FR8000OK",
+    "storage_type": "flash"
+  },
+  "scope": "128 KiB mask ROM (0x00000000..0x00020000)",
+  "method": "ROMBOOT OP_READ_RAM (0x0A) at absolute addresses, 4 bytes/transaction",
+  "restorable": false,
+  "restorable_note": "mask ROM is factory-fused silicon; read-only and cannot be re-flashed",
+  "crc_verified": false,
+  "integrity": "two independent dumps byte-identical (no ROM CRC op exists; a matched re-read is the integrity proof)",
+  "rom_size": 131072,
+  "bytes_read": 131072,
+  "sha256": "cc0db68348cc82db4fc1cd7b4bd10adc13092b510aebd0ec47ac3688bf45d7ca",
+  "vector_table": {
+    "initial_msp": "0x1100c000",
+    "reset": "0x000006e4"
+  },
+  "timestamp_utc": "2026-07-11T17:15:50+00:00",
+  "image_file": "fr8003-maskrom.bin",
+  "read_only": true,
+  "source_window": "0x00000000 (absolute READ_RAM, non-destructive)"
+}
