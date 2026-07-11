@@ -26,7 +26,7 @@ against, and was the key to decoding everything here.
 
 ## Provenance of the image
 
-`image/fr8003-dump.bin` — the full 512 KiB flash, pulled **non-destructively** over
+`image/fr8003-flash.bin` — the full 512 KiB flash, pulled **non-destructively** over
 the CON3 UART header through the ROMBOOT read path, verified two ways: the chip's
 own CRC32 (`0xa2e03042`) matched the read-back, and SHA-256 `de48ca83…6695a37`. It
 is unmodified factory firmware, and reads back **plaintext — not encrypted, not

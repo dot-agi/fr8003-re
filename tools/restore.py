@@ -145,7 +145,7 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-p", "--port", required=True, help="serial device wired to CON3")
     ap.add_argument("-b", "--baud", type=int, default=115200, help="handshake baud (default 115200)")
-    ap.add_argument("-i", "--image", required=True, help="image to write (e.g. fr8003-dump.bin)")
+    ap.add_argument("-i", "--image", required=True, help="image to write (e.g. fr8003-flash.bin)")
     ap.add_argument("--offset", type=lambda s: int(s, 0), default=0,
                     help="flash offset to write at (default 0 = full restore)")
     ap.add_argument("--sha256", help="expected SHA-256 of the image (else read <image>.sha256)")

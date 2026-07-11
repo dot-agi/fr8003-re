@@ -22,7 +22,7 @@ IMAGE_TYPES = {
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("-i", "--image", default="image/fr8003-dump.bin")
+    ap.add_argument("-i", "--image", default="image/fr8003-flash.bin")
     a = ap.parse_args()
     d = open(a.image, "rb").read()
 

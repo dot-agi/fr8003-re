@@ -117,7 +117,7 @@ python3 tools/segment_map.py                 # flash layout / entropy map
 python3 tools/parse_jump_table.py            # decode the boot header
 # full disassembly (XIP base 0x10000000, Thumb):
 arm-none-eabi-objdump -D -b binary -marm -Mforce-thumb \
-    --adjust-vma=0x10000000 image/fr8003-dump.bin | less
+    --adjust-vma=0x10000000 image/fr8003-flash.bin | less
 ```
 
 Every address cited in `docs/` is reproducible from that disassembly.
@@ -133,12 +133,12 @@ tools answer it.
 python3 tools/probe.py    -p /dev/tty.usbserial-XXXX      # verify link + CRC faithfulness
 python3 tools/dump.py     -p /dev/tty.usbserial-XXXX -o my-dump.bin       # the QSPI flash
 python3 tools/dump_rom.py -p /dev/tty.usbserial-XXXX -o my-maskrom.bin    # the 128 KiB mask ROM
-python3 tools/restore.py  -p /dev/tty.usbserial-XXXX -i image/fr8003-dump.bin
+python3 tools/restore.py  -p /dev/tty.usbserial-XXXX -i image/fr8003-flash.bin
 ```
 
 `probe.py` and `dump.py` are strictly read-only and CRC-verify the read-back
 against the chip's own CRC. `restore.py` is brick-safe (header-sector written last,
-per-sector + final verification). `image/fr8003-dump.bin` is the proven-good
+per-sector + final verification). `image/fr8003-flash.bin` is the proven-good
 recovery point.
 
 ### Building custom firmware (the roadmap)

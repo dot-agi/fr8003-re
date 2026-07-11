@@ -5,7 +5,7 @@ Classifies each block as erased, blank, code+data, or high-entropy
 (packed/encrypted), and reports where real content ends. Read-only; it never
 writes to or touches the device — it only reads the local image file.
 
-    python3 tools/segment_map.py            # default image/fr8003-dump.bin
+    python3 tools/segment_map.py            # default image/fr8003-flash.bin
     python3 tools/segment_map.py -b 0x200   # finer 512-byte blocks
 """
 import argparse
@@ -39,7 +39,7 @@ def classify(b: bytes, e: float) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("-i", "--image", default="image/fr8003-dump.bin")
+    ap.add_argument("-i", "--image", default="image/fr8003-flash.bin")
     ap.add_argument("-b", "--block", type=lambda s: int(s, 0), default=0x1000,
                     help="block size in bytes (default 0x1000)")
     a = ap.parse_args()

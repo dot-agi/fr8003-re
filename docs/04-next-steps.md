@@ -34,7 +34,7 @@
    jump_table header decoded in [02](02-jump-table-header.md), and deliver it via
    either the CON3 ROMBOOT write path (`tools/restore.py` territory) or the stock
    **BLE OTA** ([06](06-ble-ota-protocol.md)). The ~380 KB of free flash is the
-   headroom; `image/fr8003-dump.bin` is the proven recovery point.
+   headroom; `image/fr8003-flash.bin` is the proven recovery point.
 3. **Dynamic probing** on a live device to close the OTA/NVDS gaps above.
 
 ## Two proven routes to "build on the wireless"

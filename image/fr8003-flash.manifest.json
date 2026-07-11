@@ -29,7 +29,7 @@
   ],
   "image_entropy_bits_per_byte": 2.1935,
   "timestamp_utc": "2026-07-04T19:06:52.319315+00:00",
-  "image_file": "fr8003-dump.bin",
+  "image_file": "fr8003-flash.bin",
   "read_only": true,
   "source_window": "0x10000000 (XIP, non-destructive)"
 }

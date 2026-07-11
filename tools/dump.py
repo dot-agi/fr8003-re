@@ -6,9 +6,9 @@ algorithm implements as a plain memory read from the 0x10000000 XIP window (see
 fr_isp.py), so this operation is READ-ONLY: it never erases, programs, or
 otherwise changes the chip.  Writes three artefacts next to each other:
 
-    fr8003-dump.bin        the raw 512 KiB image
-    fr8003-dump.bin.sha256 its SHA-256
-    fr8003-dump.manifest.json   chip id, size, readout verdict, timestamp, hash
+    fr8003-flash.bin        the raw 512 KiB image
+    fr8003-flash.bin.sha256 its SHA-256
+    fr8003-flash.manifest.json   chip id, size, readout verdict, timestamp, hash
 
 Run ``probe.py`` first to confirm the readout is plaintext.  If the readout
 looks encrypted/blocked, this still writes the image but flags it loudly in the
@@ -59,7 +59,7 @@ def main(argv=None) -> int:
     ap.add_argument("-p", "--port", required=True,
                     help="serial device wired to CON3, e.g. /dev/tty.usbserial-XXXX")
     ap.add_argument("-b", "--baud", type=int, default=115200, help="handshake baud (default 115200)")
-    ap.add_argument("-o", "--out", default="fr8003-dump.bin", help="output image path")
+    ap.add_argument("-o", "--out", default="fr8003-flash.bin", help="output image path")
     ap.add_argument("--size", type=lambda s: int(s, 0), default=FLASH_SIZE,
                     help=f"bytes to read (default full flash 0x{FLASH_SIZE:x})")
     args = ap.parse_args(argv)

@@ -17,7 +17,7 @@ The FR8003A splits its firmware across two physically separate memories:
 - **Mask ROM** @ `0x0` — FreqChip's, mask-programmed, immutable: the radio stack +
   boot. *This document.*
 - **QSPI flash** @ `0x10000000` — Akko's application (keyboard logic,
-  HID-over-UART, BLE profiles, NVDS). `fr8003-dump.bin`, decoded across `01`–`08`.
+  HID-over-UART, BLE profiles, NVDS). `fr8003-flash.bin`, decoded across `01`–`08`.
 
 The running system is ROM **+** flash together: the flash app calls down into the
 ROM for all radio work. Neither image alone is "the complete firmware." The flash
