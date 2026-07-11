@@ -110,18 +110,21 @@ ID 6).
 
 ## Confidence & open questions
 
-**Confirmed:** SRAM = `0x11000000`; RF/PHY entirely in mask ROM (no flash
-frspim/modem/channel/hop code); the NVDS identity struct with 6 static-random slot
-addresses; the bond DB; the RF-cal blob; the radio reads no switch GPIO; the
+**Confirmed:** SRAM = `0x11000000`; the NVDS identity struct with 6 static-random
+slot addresses; the bond DB; the RF-cal blob; the radio reads no switch GPIO; the
 event-driven mode state machine; the GATT control channel + raw-HID bridge.
+(⚠️ the earlier "RF/PHY entirely in mask ROM" claim is **withdrawn** — the MODEM
+bank `0x50024000` is APP-programmed; see [`09`](09-mask-rom.md).)
 
 **Inferred:** on-air PHY = BLE 1 Mbps GFSK; the slot addresses are per-host
 identities; the 2.4 GHz link carries the same HID payloads over a BLE-style PDU.
 
-**The central undecidable from this dump:** is "2.4G mode" a distinct proprietary
-PHY (ROM `rf_simu`, connectionless GFSK) or just a fixed-address BLE connection to
-the dongle? No app-side discriminator exists — both are ROM-triggered.
+**Resolved by the mask-ROM dump:** there is **no distinct proprietary 2.4G PHY** —
+the ROM is a RivieraWaves BLE stack and `rf_simu` is only an RF-init shim. "2.4G
+mode" runs over the BLE core with an APP-supplied MODEM profile; see
+[`09`](09-mask-rom.md).
 
-**Next step to close the gap:** dump the FR8003A **mask ROM** (`0x0–0x20000`) via
-ROMBOOT (the same CON3 path used for the flash), or RE the bundled dongle's own
-firmware. The GFSK/channel/hop constants provably reside there, not in this flash.
+**Done:** the FR8003A **mask ROM** (`0x0–0x20000`) was dumped via ROMBOOT (the same
+CON3 path) and analyzed in [`09`](09-mask-rom.md). The config is *split* — BLE core
++ RF framework in ROM, MODEM register image in the APP flash (`0x50024000`); the
+residual unknown is that bank's byte-level semantics.
